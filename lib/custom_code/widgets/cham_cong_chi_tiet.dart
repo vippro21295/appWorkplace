@@ -102,6 +102,7 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
   String? dropDowntypeTC;
   String? dropDownTypeNP;
   String? dropDownTypeNPCD;
+  String? dropDownTypeNPBHXH;
 
   TextEditingController txtGhiChuTS = TextEditingController();
   TextEditingController txtGhiChuCT = TextEditingController();
@@ -385,24 +386,38 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
   void changeTypeNP() {
     furloughNP = new Furlough();
     if (dropDownTypeNP == "Nghỉ phép năm") {
-      showNPTT = true;
-      showNPCD = false;
-      showNPBHXH = false;
+      setState(() {
+        showNPTT = true;
+        showNPCD = false;
+        showNPBHXH = false;
+        listDateArray = [];
+        toDateNP.text = "";
+      });
     } else if (dropDownTypeNP == "Nghỉ BHXH") {
-      showNPTT = false;
-      showNPCD = false;
-      showNPBHXH = true;
+      setState(() {
+        showNPTT = false;
+        showNPCD = false;
+        showNPBHXH = true;
+        numberFurloughMaxUse = 0;
+        listDateArray = [];
+        toDateNP.text = "";
+      });
     } else if (dropDownTypeNP == "Nghỉ chế độ") {
-      showNPTT = false;
-      showNPCD = true;
-      showNPBHXH = false;
+      setState(() {
+        showNPTT = false;
+        showNPCD = true;
+        showNPBHXH = false;
+        numberFurloughMaxUse = 0;
+        listDateArray = [];
+        toDateNP.text = "";
+      });
     }
   }
 
-  void changeNumberFurloughMax() {
+  void changeNumberFurloughMax(String typeNP) {
     if (listReasonFurlough!.isNotEmpty) {
       listReasonFurlough!.forEach((element) {
-        if (element["ReasonName"].toString() == dropDownTypeNPCD) {
+        if (element["ReasonName"].toString() == typeNP) {
           setState(() {
             String maxInterval = element["MaxInterval"].toString();
             numberFurloughMaxUse = int.parse(maxInterval);
@@ -459,6 +474,18 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
         break;
     }
     return name;
+  }
+
+  String returnIdTypeNPCD(String nameType) {
+    String idType = '';
+    if (listReasonFurlough!.isNotEmpty) {
+      listReasonFurlough!.forEach((element) {
+        if (element["ReasonName"].toString() == nameType) {
+          idType = element["ReasonType"].toString();
+        }
+      });
+    }
+    return idType;
   }
 
   List<String> sort2Argument(arg1, arg2) {
@@ -763,7 +790,52 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
   }
 
   void submitTicketNPCD() async {
-    if (validationSubmitNPCD()) {}
+    if (validationSubmitNPCD()) {
+      actions.popupConfirm(context, "Xác nhận gửi phiếu nghỉ phép", () async {
+        setState(() {
+          isLoading = true;
+        });
+        responseTicket = await PTCCreateTicketNPCD.call(
+            reasonType: returnIdTypeNPCD(dropDownTypeNPCD!),
+            userName: FFAppState().userName,
+            note: txtGhiChuNP.text,
+            numberFurloughDetail: furloughNP.numberFurlough,
+            listFurloughDetail: listDateArray);
+        if (responseTicket != null) {
+          setState(() {
+            isLoading = false;
+          });
+
+          if (getJsonField(
+            (responseTicket?.jsonBody ?? ''),
+            r'''$.isSuccess''',
+          )) {
+            actions.toastMessage(
+                context,
+                "Success",
+                "Thành công",
+                getJsonField(
+                  (responseTicket?.jsonBody ?? ''),
+                  r'''$.message''',
+                ));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => LichChamCongThangCopyWidget()));
+          } else {
+            actions.toastMessage(
+              context,
+              "Error",
+              "Thất bại",
+              getJsonField(
+                (responseTicket?.jsonBody ?? ''),
+                r'''$.message''',
+              ),
+            );
+          }
+        }
+      });
+    }
   }
 
   void cancelTicket(String typeTicket) {
@@ -847,7 +919,7 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
               else
                 listTS = listTS!.removeAt(index);
             } else if (typeTicket == "CT")
-              listTS = <dynamic>[];
+              listCT = <dynamic>[];
             else if (typeTicket == "TC") listTC = <dynamic>[];
           });
         } else {
@@ -3281,7 +3353,7 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                               // listReasonFurlough!.map((e) => e["ReasonName"].toString()).toList(),
                               onChanged: (val) => setState(() => {
                                     dropDownTypeNPCD = val,
-                                    changeNumberFurloughMax()
+                                    changeNumberFurloughMax(dropDownTypeNPCD!)
                                   }),
                               width: double.infinity,
                               height: 52,
@@ -3718,8 +3790,8 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                                   .toList(),
                               // listReasonFurlough!.map((e) => e["ReasonName"].toString()).toList(),
                               onChanged: (val) => setState(() => {
-                                    dropDownTypeNPCD = val,
-                                    changeNumberFurloughMax()
+                                    dropDownTypeNPBHXH = val,
+                                    changeNumberFurloughMax(dropDownTypeNPBHXH!)
                                   }),
                               width: double.infinity,
                               height: 52,
@@ -4062,7 +4134,7 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '2',
+                                              numberFurloughMaxUse.toString(),
                                               style: FlutterFlowTheme.of(
                                                       context)
                                                   .bodyText1

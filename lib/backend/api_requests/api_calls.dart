@@ -218,10 +218,10 @@ class PTCCreateTicketNPTT {
       double? tempLeave = 0,
       String? userName = "",
       List<FurloughTicket>? listFurloughDetail}) {
-    
     String detail = '';
     listFurloughDetail!.forEach((element) {
-      detail = detail + '''{
+      detail = detail +
+          '''{
         "ShiftName":"${element.shiftName}",
         "ShiftID": ${element.shiftId},
         "HaftFurlough":"${element.haftFurlough}",
@@ -231,7 +231,7 @@ class PTCCreateTicketNPTT {
        },''';
     });
 
-    detail = detail.substring(0,detail.length - 1);
+    detail = detail.substring(0, detail.length - 1);
     final body = """
 { 
   "TicketNP": {
@@ -252,8 +252,54 @@ class PTCCreateTicketNPTT {
   ]
 }""";
     return ApiManager.instance.makeApiCall(
-      callName: 'PTCCreateTicketTC',
+      callName: 'PTCCreateTicketNPTT',
       apiUrl: 'https://app.phattien.com/api/Timekeep/CreateTicketNPTT',
+      callType: ApiCallType.POST,
+      headers: {},
+      params: {},
+      body: body,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+    );
+  }
+}
+
+class PTCCreateTicketNPCD {
+  static Future<ApiCallResponse> call(
+      {String? reasonType = "",
+      String? note = "",
+      double? numberFurloughDetail = 0,
+      String? userName = "",
+      List<FurloughTicket>? listFurloughDetail}) {
+    String detail = '';
+    listFurloughDetail!.forEach((element) {
+      detail = detail +
+          '''{
+        "ShiftName":"${element.shiftName}",
+        "ShiftID": ${element.shiftId},
+        "HaftFurlough":"${element.haftFurlough}",
+        "FromDate":"${element.fromDate}",
+        "ToDate":"${element.toDate}",
+        "NumberFurlough": ${element.numberFurlough}
+       },''';
+    });
+
+    detail = detail.substring(0, detail.length - 1);
+    final body = """
+{ 
+  "TicketNP": {
+    "UserName": "${userName}",
+    "ReasonType":"${reasonType}",
+    "Note":"${note}",
+    "NumberFurloughDetail":${numberFurloughDetail}
+  },
+  "TicketDetailNP":[
+    ${detail}
+  ]
+}""";
+    return ApiManager.instance.makeApiCall(
+      callName: 'PTCCreateTicketNPCD',
+      apiUrl: 'https://app.phattien.com/api/Timekeep/CreateTicketNPCD',
       callType: ApiCallType.POST,
       headers: {},
       params: {},
