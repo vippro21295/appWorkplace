@@ -121,6 +121,11 @@ class _ChamCongChiTietTreSomCopyWidgetState
                                 .jsonBody,
                             r'''$.listTC''')
                         .toList(),
+                    listNP: getJsonField(
+                            chamCongChiTietTreSomCopyPTCDetailDateResponse
+                                .jsonBody,
+                            r'''$.listNP''')
+                        .toList(),
                     listTypeTS: getJsonField(
                             chamCongChiTietTreSomCopyPTCDetailDateResponse
                                 .jsonBody,
@@ -136,7 +141,7 @@ class _ChamCongChiTietTreSomCopyWidgetState
                                 .jsonBody,
                             r'''$.listReason''')
                         .toList(),
-                         listReasonFurlough: getJsonField(
+                    listReasonFurlough: getJsonField(
                             chamCongChiTietTreSomCopyPTCDetailDateResponse
                                 .jsonBody,
                             r'''$.listReasonFurlough''')

@@ -25,6 +25,7 @@ class ChamCongChiTiet extends StatefulWidget {
       this.listTS,
       this.listCT,
       this.listTC,
+      this.listNP,
       this.listTypeTS,
       this.listTypeCT,
       this.listReason,
@@ -39,6 +40,7 @@ class ChamCongChiTiet extends StatefulWidget {
   final List<dynamic>? listTS;
   final List<dynamic>? listCT;
   final List<dynamic>? listTC;
+  final List<dynamic>? listNP;
   final List<dynamic>? listTypeTS;
   final List<dynamic>? listTypeCT;
   final List<dynamic>? listReason;
@@ -52,6 +54,7 @@ class ChamCongChiTiet extends StatefulWidget {
       listTS!,
       listCT!,
       listTC!,
+      listNP!,
       listTypeTS!,
       listTypeCT!,
       listReason!,
@@ -115,6 +118,7 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
   List<dynamic>? listTS;
   List<dynamic>? listCT;
   List<dynamic>? listTC;
+  List<dynamic>? listNP;
   List<dynamic>? listTypeTS;
   List<dynamic>? listTypeCT;
   List<dynamic>? listReason;
@@ -126,6 +130,7 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
       this.listTS,
       this.listCT,
       this.listTC,
+      this.listNP,
       this.listTypeTS,
       this.listTypeCT,
       this.listReason,
@@ -142,7 +147,7 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
       timeInRestApp = null;
       timeOutRestApp = null;
       furloughNP = new Furlough();
-      dropDownTypeNP = "Nghỉ chế độ";
+      dropDownTypeNP = "Nghỉ phép năm";
       fromDateNP.text = DateFormat("dd/MM/yyyy")
           .format(DateTime.parse(listDate["start"].toString()));
     });
@@ -476,7 +481,7 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
     return name;
   }
 
-  String returnIdTypeNPCD(String nameType) {
+  String returnIdTypeNP(String nameType) {
     String idType = '';
     if (listReasonFurlough!.isNotEmpty) {
       listReasonFurlough!.forEach((element) {
@@ -796,11 +801,70 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
           isLoading = true;
         });
         responseTicket = await PTCCreateTicketNPCD.call(
-            reasonType: returnIdTypeNPCD(dropDownTypeNPCD!),
+            reasonType: returnIdTypeNP(dropDownTypeNPCD!),
             userName: FFAppState().userName,
             note: txtGhiChuNP.text,
             numberFurloughDetail: furloughNP.numberFurlough,
             listFurloughDetail: listDateArray);
+        if (responseTicket != null) {
+          setState(() {
+            isLoading = false;
+          });
+
+          if (getJsonField(
+            (responseTicket?.jsonBody ?? ''),
+            r'''$.isSuccess''',
+          )) {
+            actions.toastMessage(
+                context,
+                "Success",
+                "Thành công",
+                getJsonField(
+                  (responseTicket?.jsonBody ?? ''),
+                  r'''$.message''',
+                ));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => LichChamCongThangCopyWidget()));
+          } else {
+            actions.toastMessage(
+              context,
+              "Error",
+              "Thất bại",
+              getJsonField(
+                (responseTicket?.jsonBody ?? ''),
+                r'''$.message''',
+              ),
+            );
+          }
+        }
+      });
+    }
+  }
+
+  void submitTicketNPBHXH() async {
+    if (validationSubmitNPBHXH()) {
+      actions.popupConfirm(context, "Xác nhận gửi phiếu nghỉ phép", () async {
+        List<FurloughTicket> listTicketBHXH = [];
+        FurloughTicket furloughTicket = new FurloughTicket();
+        furloughTicket.shiftName = "...";
+        furloughTicket.shiftId = 2055;
+        furloughTicket.fromDate = fromDateNP.text;
+        furloughTicket.toDate = toDateNP.text;
+        furloughTicket.haftFurlough = "P";
+        furloughTicket.numberFurlough = 1;
+        listTicketBHXH.add(furloughTicket);
+        setState(() {
+          isLoading = true;
+        });
+
+        responseTicket = await PTCCreateTicketNPBHXH.call(
+            reasonType: returnIdTypeNP(dropDownTypeNPBHXH!),
+            userName: FFAppState().userName,
+            note: txtGhiChuNP.text,
+            numberFurloughDetail: furloughNP.numberFurlough,
+            listFurloughDetail: listTicketBHXH);
         if (responseTicket != null) {
           setState(() {
             isLoading = false;
@@ -890,6 +954,11 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
           content = "Xác nhận xóa phiếu tăng ca";
         }
         break;
+      case "NP":
+        {
+          content = "Xác nhận xóa phiếu nghỉ phép";
+        }
+        break;
     }
 
     actions.popupConfirm(context, content, () async {
@@ -897,10 +966,16 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
         isLoading = true;
       });
 
-      responseDelete = await PTCDeleteTicketUpdate.call(
-          ticketID: ticketId,
-          updateDate: updateDate,
-          userName: FFAppState().userName);
+      if (typeTicket == "NP")
+        responseDelete = await PTCDeleteTicketFurlough.call(
+            ticketID: ticketId,
+            updateDate: updateDate,
+            userName: FFAppState().userName);
+      else
+        responseDelete = await PTCDeleteTicketUpdate.call(
+            ticketID: ticketId,
+            updateDate: updateDate,
+            userName: FFAppState().userName);
 
       if (responseDelete != null) {
         setState(() {
@@ -920,7 +995,9 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                 listTS = listTS!.removeAt(index);
             } else if (typeTicket == "CT")
               listCT = <dynamic>[];
-            else if (typeTicket == "TC") listTC = <dynamic>[];
+            else if (typeTicket == "TC")
+              listTC = <dynamic>[];
+            else if (typeTicket == "NP") listNP = <dynamic>[];
           });
         } else {
           actions.toastMessage(context, "Error", "Thất bại",
@@ -1291,6 +1368,33 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
           context, "Warning", "Lỗi", "Vui lòng nhập lý do làm phiếu");
       return false;
     }
+    return true;
+  }
+
+  bool validationSubmitNPBHXH() {
+    if (dropDownTypeNPBHXH == null || dropDownTypeNPBHXH == "") {
+      actions.toastMessage(
+          context, "Warning", "Lỗi", "Vui lòng chọn loại phép BHXH");
+      return false;
+    }
+
+    if (listDateArray.isEmpty) {
+      actions.toastMessage(context, "Warning", "Lỗi",
+          "Danh sách ngày nghỉ rỗng không thể tạo phiếu");
+      return false;
+    } else {
+      if (listDateArray.length > numberFurloughMaxUse) {
+        actions.toastMessage(context, "Warning", "Lỗi",
+            "Số ngày nghỉ phép không được vượt quá tối đa số ngày nghỉ cho phép");
+        return false;
+      }
+    }
+    if (txtGhiChuNP.text == "") {
+      actions.toastMessage(
+          context, "Warning", "Lỗi", "Vui lòng nhập lý do làm phiếu");
+      return false;
+    }
+
     return true;
   }
 
@@ -2326,6 +2430,32 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                           ]
                         ],
                         if (showNghiPhep!) ...[
+                          if (listNP!.isNotEmpty) ...[
+                            for (var i = 0; i < listNP!.length; i++) ...[
+                              _buildListNP(
+                                listNP![0]["TicketID"].toString(),
+                                listNP![0]["CreatedDate"].toString(),
+                                listNP![0]["UpdatedDate"].toString(),
+                                listNP![0]["Name"].toString(),
+                                listNP![0]["FromDate"].toString(),
+                                listNP![0]["ToDate"].toString(),
+                                listNP![0]["Type"].toString(),
+                                listNP![0]["NumberFurloughDetail"].toString(),
+                                listNP![0]["NoSalary"] == null
+                                    ? "0"
+                                    : listNP![0]["NoSalary"].toString(),
+                                listNP![0]["TempLeave"] == null
+                                    ? "0"
+                                    : listNP![0]["TempLeave"].toString(),
+                                listNP![0]["Note"].toString(),
+                                listNP![0]["Status"].toString(),
+                                i,
+                              )
+                            ],
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
                           FlutterFlowDropDown(
                             initialOption: dropDownTypeNP,
                             options: [
@@ -2369,22 +2499,24 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         0, 0, 5, 0),
                                     child: TextField(
+                                      readOnly: true,
                                       controller: fromDateNP,
-                                      onTap: () async {
-                                        DateTime? pickeddate =
-                                            await showDatePicker(
-                                                context: context,
-                                                initialDate: DateTime.now(),
-                                                firstDate: DateTime(2000),
-                                                lastDate: DateTime(2101));
-                                        if (pickeddate != null) {
-                                          setState(() {
-                                            fromDateNP.text =
-                                                DateFormat('dd/MM/yyyy')
-                                                    .format(pickeddate);
-                                          });
-                                        }
-                                      },
+                                      
+                                      // onTap: () async {
+                                      //   DateTime? pickeddate =
+                                      //       await showDatePicker(
+                                      //           context: context,
+                                      //           initialDate: DateTime.now(),
+                                      //           firstDate: DateTime(2000),
+                                      //           lastDate: DateTime(2101));
+                                      //   if (pickeddate != null) {
+                                      //     setState(() {
+                                      //       fromDateNP.text =
+                                      //           DateFormat('dd/MM/yyyy')
+                                      //               .format(pickeddate);
+                                      //     });
+                                      //   }
+                                      // },
                                       decoration: InputDecoration(
                                         labelText: 'Nghỉ từ ngày',
                                         hintStyle: FlutterFlowTheme.of(context)
@@ -3390,6 +3522,7 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         0, 0, 5, 0),
                                     child: TextField(
+                                      readOnly: true,
                                       controller: fromDateNP,
                                       onTap: () async {
                                         DateTime? pickeddate =
@@ -3473,19 +3606,19 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                                         5, 0, 0, 0),
                                     child: TextFormField(
                                       controller: toDateNP,
-                                      onTap: () async {
-                                        DateTime? pickeddate =
-                                            await showDatePicker(
-                                                context: context,
-                                                initialDate: DateTime.now(),
-                                                firstDate: DateTime(2000),
-                                                lastDate: DateTime(2101));
-                                        if (pickeddate != null) {
-                                          setState(() {
-                                            addDateNP(pickeddate);
-                                          });
-                                        }
-                                      },
+                                      // onTap: () async {
+                                      //   DateTime? pickeddate =
+                                      //       await showDatePicker(
+                                      //           context: context,
+                                      //           initialDate: DateTime.now(),
+                                      //           firstDate: DateTime(2000),
+                                      //           lastDate: DateTime(2101));
+                                      //   if (pickeddate != null) {
+                                      //     setState(() {
+                                      //       addDateNP(pickeddate);
+                                      //     });
+                                      //   }
+                                      // },
                                       obscureText: false,
                                       decoration: InputDecoration(
                                         labelText: 'Nghỉ đến ngày',
@@ -3828,22 +3961,23 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         0, 0, 5, 0),
                                     child: TextField(
+                                      readOnly: true,
                                       controller: fromDateNP,
-                                      onTap: () async {
-                                        DateTime? pickeddate =
-                                            await showDatePicker(
-                                                context: context,
-                                                initialDate: DateTime.now(),
-                                                firstDate: DateTime(2000),
-                                                lastDate: DateTime(2101));
-                                        if (pickeddate != null) {
-                                          setState(() {
-                                            fromDateNP.text =
-                                                DateFormat('dd/MM/yyyy')
-                                                    .format(pickeddate);
-                                          });
-                                        }
-                                      },
+                                      // onTap: () async {
+                                      //   DateTime? pickeddate =
+                                      //       await showDatePicker(
+                                      //           context: context,
+                                      //           initialDate: DateTime.now(),
+                                      //           firstDate: DateTime(2000),
+                                      //           lastDate: DateTime(2101));
+                                      //   if (pickeddate != null) {
+                                      //     setState(() {
+                                      //       fromDateNP.text =
+                                      //           DateFormat('dd/MM/yyyy')
+                                      //               .format(pickeddate);
+                                      //     });
+                                      //   }
+                                      // },
                                       decoration: InputDecoration(
                                         labelText: 'Nghỉ từ ngày',
                                         hintStyle: FlutterFlowTheme.of(context)
@@ -4055,7 +4189,8 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '2',
+                                              furloughNP.numberFurlough
+                                                  .toString(),
                                               style: FlutterFlowTheme.of(
                                                       context)
                                                   .bodyText1
@@ -4169,7 +4304,7 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                             _buildCancelSend(() {
                               cancelTicket("NP");
                             }, () {
-                              submitTicketNPCD();
+                              submitTicketNPBHXH();
                             })
                           ]
                         ]
@@ -4945,6 +5080,518 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                   ],
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListNP(
+      String ticketId,
+      String createdDate,
+      String updateDate,
+      String typeNP,
+      String fromDate,
+      String toDate,
+      String typeTicket,
+      String numberFurlough,
+      String noSalary,
+      String tempLeave,
+      String note,
+      String status,
+      int index) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Slidable(
+        endActionPane: ActionPane(
+          extentRatio: 0.3,
+          motion: StretchMotion(),
+          children: [
+            SlidableAction(
+              onPressed: (context) async {
+                deletedTicket(ticketId, updateDate, index, "NP");
+              },
+              icon: FFIcons.kdelete,
+              backgroundColor: Colors.red,
+              label: "Hủy phiếu",
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(8),
+                  bottomRight: Radius.circular(8)),
+            ),
+          ],
+        ),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: FlutterFlowTheme.of(context).secondaryBackground,
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 4,
+                color: Color(0x33000000),
+                offset: Offset(2, 4),
+              )
+            ],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Material(
+                color: Colors.transparent,
+                elevation: 1,
+                child: Container(
+                  width: double.infinity,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).stadeBlue3,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                        child: Text(
+                          'Phiếu đã gửi',
+                          style: FlutterFlowTheme.of(context)
+                              .bodyText1
+                              .override(
+                                fontFamily: 'Inter',
+                                color:
+                                    FlutterFlowTheme.of(context).primaryBtnText,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.of(context).tertiaryColor,
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(8, 0, 10, 0),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: status == 'APP'
+                                ? Color.fromARGB(255, 1, 247, 9)
+                                : (status == 'ACC' || status == "AC2")
+                                    ? Color.fromARGB(255, 252, 227, 3)
+                                    : Color.fromARGB(255, 255, 20, 3),
+                          ),
+                        ),
+                        child: Icon(
+                          status == 'APP'
+                              ? Icons.check_circle
+                              : (status == 'ACC' || status == 'AC2')
+                                  ? Icons.hourglass_empty
+                                  : Icons.clear,
+                          color: status == 'APP'
+                              ? Color.fromARGB(255, 1, 247, 9)
+                              : (status == 'ACC' || status == "AC2")
+                                  ? Color.fromARGB(255, 252, 227, 3)
+                                  : Color.fromARGB(255, 255, 20, 3),
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 2),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Phiếu nghỉ phép',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyText1
+                                      .override(
+                                        fontFamily: 'Inter',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 0, 5, 5),
+                                  child: Text(
+                                    DateFormat("dd/MM/yyyy HH:mm")
+                                        .format(DateTime.parse(createdDate)),
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Inter',
+                                          color: Color(0xFF979DA3),
+                                          fontSize: 11,
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 2),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 0, 3, 0),
+                                  child: Text(
+                                    'Loại phiếu: ',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Inter',
+                                          fontSize: 13,
+                                        ),
+                                  ),
+                                ),
+                                Text(
+                                  typeTicket == 'TT'
+                                      ? 'Nghỉ phép năm'
+                                      : typeTicket == 'CD'
+                                          ? 'Nghỉ chế độ'
+                                          : 'Nghỉ BHXH',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyText1
+                                      .override(
+                                        fontFamily: 'Inter',
+                                        color: FlutterFlowTheme.of(context)
+                                            .stadeBlue3,
+                                        fontSize: 13,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (typeTicket != 'TT')
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 2),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0, 0, 3, 0),
+                                    child: Text(
+                                      'Loại phép: ',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyText1
+                                          .override(
+                                            fontFamily: 'Inter',
+                                            fontSize: 13,
+                                          ),
+                                    ),
+                                  ),
+                                  Text(
+                                    typeNP,
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Inter',
+                                          color: FlutterFlowTheme.of(context)
+                                              .stadeBlue3,
+                                          fontSize: 13,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (typeTicket == 'TT') ...[
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 2),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0, 0, 3, 0),
+                                    child: Text(
+                                      'Ngày nghỉ: ',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyText1
+                                          .override(
+                                            fontFamily: 'Inter',
+                                            fontSize: 13,
+                                          ),
+                                    ),
+                                  ),
+                                  Text(
+                                    DateFormat("dd/MM/yyyy")
+                                        .format(DateTime.parse(toDate)),
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Inter',
+                                          color: FlutterFlowTheme.of(context)
+                                              .stadeBlue3,
+                                          fontSize: 13,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ] else ...[
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 2),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0, 0, 5, 0),
+                                          child: Text(
+                                            'Từ: ',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyText1,
+                                          ),
+                                        ),
+                                        Text(
+                                          DateFormat("dd/MM/yyyy")
+                                              .format(DateTime.parse(fromDate)),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyText1
+                                              .override(
+                                                fontFamily: 'Inter',
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .stadeBlue3,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0, 0, 5, 0),
+                                          child: Text(
+                                            'Đến: ',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyText1,
+                                          ),
+                                        ),
+                                        Text(
+                                          DateFormat("dd/MM/yyyy")
+                                              .format(DateTime.parse(toDate)),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyText1
+                                              .override(
+                                                fontFamily: 'Inter',
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .stadeBlue3,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          if (typeTicket == 'TT') ...[
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 2),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0, 0, 5, 0),
+                                          child: Text(
+                                            'Phép:',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyText1,
+                                          ),
+                                        ),
+                                        Text(
+                                          numberFurlough,
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyText1
+                                              .override(
+                                                fontFamily: 'Inter',
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .stateRED3,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0, 0, 5, 0),
+                                          child: Text(
+                                            'Nghỉ KL:',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyText1,
+                                          ),
+                                        ),
+                                        Text(
+                                          noSalary,
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyText1
+                                              .override(
+                                                fontFamily: 'Inter',
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .stateOrange3,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0, 0, 5, 0),
+                                          child: Text(
+                                            'Tạm ứng:',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyText1,
+                                          ),
+                                        ),
+                                        Text(
+                                          tempLeave,
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyText1
+                                              .override(
+                                                fontFamily: 'Inter',
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .stateOrange3,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ] else
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 2),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0, 0, 3, 0),
+                                    child: Text(
+                                      'Số ngày: ',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyText1
+                                          .override(
+                                            fontFamily: 'Inter',
+                                            fontSize: 13,
+                                          ),
+                                    ),
+                                  ),
+                                  Text(
+                                    numberFurlough,
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Inter',
+                                          color: FlutterFlowTheme.of(context)
+                                              .stateRED3,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 0, 3, 0),
+                                  child: Text(
+                                    'Lý do: ',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Inter',
+                                          fontSize: 13,
+                                        ),
+                                  ),
+                                ),
+                                Text(
+                                  note,
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyText1
+                                      .override(
+                                        fontFamily: 'Inter',
+                                        color: FlutterFlowTheme.of(context)
+                                            .stadeBlue3,
+                                        fontSize: 13,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),

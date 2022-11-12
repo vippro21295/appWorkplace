@@ -310,13 +310,74 @@ class PTCCreateTicketNPCD {
   }
 }
 
+class PTCCreateTicketNPBHXH {
+  static Future<ApiCallResponse> call(
+      {String? reasonType = "",
+      String? note = "",
+      double? numberFurloughDetail = 0,
+      String? userName = "",
+      List<FurloughTicket>? listFurloughDetail}) {
+    String detail = '';
+    listFurloughDetail!.forEach((element) {
+      detail = detail +
+          '''{
+        "ShiftName":"${element.shiftName}",
+        "ShiftID": ${element.shiftId},
+        "HaftFurlough":"${element.haftFurlough}",
+        "FromDate":"${element.fromDate}",
+        "ToDate":"${element.toDate}",
+        "NumberFurlough": ${element.numberFurlough}
+       },''';
+    });
+
+    detail = detail.substring(0, detail.length - 1);
+    final body = """
+{ 
+  "TicketNP": {
+    "UserName": "${userName}",
+    "ReasonType":"${reasonType}",
+    "Note":"${note}",
+    "NumberFurloughDetail":${numberFurloughDetail}
+  },
+  "TicketDetailNP":[
+    ${detail}
+  ]
+}""";
+    return ApiManager.instance.makeApiCall(
+      callName: 'PTCCreateTicketNPBHXH',
+      apiUrl: 'https://app.phattien.com/api/Timekeep/CreateTicketNPBHXH',
+      callType: ApiCallType.POST,
+      headers: {},
+      params: {},
+      body: body,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+    );
+  }
+}
+
+
 class PTCDeleteTicketUpdate {
   static Future<ApiCallResponse> call(
       {String? ticketID = '', String? updateDate = '', String? userName = ''}) {
     return ApiManager.instance.makeApiCall(
         callName: 'PTCDeleteTicketUpdate',
         apiUrl:
-            'https://app.phattien.com/api/Timekeep/DeleteTicketTS?ticketID=${ticketID}&updateDate=${updateDate}&userName=${userName}',
+            'https://app.phattien.com/api/Timekeep/DeleteTicketUpdate?ticketID=${ticketID}&updateDate=${updateDate}&userName=${userName}',
+        callType: ApiCallType.GET,
+        headers: {},
+        params: {},
+        returnBody: true);
+  }
+}
+
+class PTCDeleteTicketFurlough {
+  static Future<ApiCallResponse> call(
+      {String? ticketID = '', String? updateDate = '', String? userName = ''}) {
+    return ApiManager.instance.makeApiCall(
+        callName: 'PTCDeleteTicketFurlough',
+        apiUrl:
+            'https://app.phattien.com/api/Timekeep/DeleteTicketFurlough?ticketID=${ticketID}&updateDate=${updateDate}&userName=${userName}',
         callType: ApiCallType.GET,
         headers: {},
         params: {},
