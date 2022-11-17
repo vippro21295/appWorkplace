@@ -2433,22 +2433,22 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                           if (listNP!.isNotEmpty) ...[
                             for (var i = 0; i < listNP!.length; i++) ...[
                               _buildListNP(
-                                listNP![0]["TicketID"].toString(),
-                                listNP![0]["CreatedDate"].toString(),
-                                listNP![0]["UpdatedDate"].toString(),
-                                listNP![0]["Name"].toString(),
-                                listNP![0]["FromDate"].toString(),
-                                listNP![0]["ToDate"].toString(),
-                                listNP![0]["Type"].toString(),
-                                listNP![0]["NumberFurloughDetail"].toString(),
-                                listNP![0]["NoSalary"] == null
+                                listNP![i]["TicketID"].toString(),
+                                listNP![i]["CreatedDate"].toString(),
+                                listNP![i]["UpdatedDate"].toString(),
+                                listNP![i]["Name"].toString(),
+                                listNP![i]["FromDate"].toString(),
+                                listNP![i]["ToDate"].toString(),
+                                listNP![i]["Type"].toString(),
+                                listNP![i]["NumberFurloughDetail"].toString(),
+                                listNP![i]["NoSalary"] == null
                                     ? "0"
-                                    : listNP![0]["NoSalary"].toString(),
-                                listNP![0]["TempLeave"] == null
+                                    : listNP![i]["NoSalary"].toString(),
+                                listNP![i]["TempLeave"] == null
                                     ? "0"
-                                    : listNP![0]["TempLeave"].toString(),
-                                listNP![0]["Note"].toString(),
-                                listNP![0]["Status"].toString(),
+                                    : listNP![i]["TempLeave"].toString(),
+                                listNP![i]["Note"].toString(),
+                                listNP![i]["Status"].toString(),
                                 i,
                               )
                             ],

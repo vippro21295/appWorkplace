@@ -1,4 +1,4 @@
-import 'dart:ui';
+//import 'dart:ui';
 
 import '../../custom_code/model/furlough_ticket.dart';
 import '../../flutter_flow/flutter_flow_util.dart';
@@ -7,7 +7,9 @@ import 'api_manager.dart';
 
 export 'api_manager.dart' show ApiCallResponse;
 
-const _kPrivateApiFunctionName = 'ffPrivateApiCall';
+//const _kPrivateApiFunctionName = 'ffPrivateApiCall';
+const _apiService = 'https://app.phattien.com/api';
+//const _apiService = 'https://0f10-222-253-45-21.ap.ngrok.io/api';
 
 class PTCLoginCall {
   static Future<ApiCallResponse> call({
@@ -21,7 +23,7 @@ class PTCLoginCall {
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'PTCLogin',
-      apiUrl: 'https://app.phattien.com/api/User/Login',
+      apiUrl: _apiService + '/User/Login',
       callType: ApiCallType.POST,
       headers: {},
       params: {},
@@ -44,7 +46,7 @@ class PTCTitleCall {
     return ApiManager.instance.makeApiCall(
       callName: 'PTCTitle',
       apiUrl:
-          'https://app.phattien.com/api/Timekeep/GetTitleTimekeepApp?userName=${userName}',
+          _apiService + '/Timekeep/GetTitleTimekeepApp?userName=${userName}',
       callType: ApiCallType.GET,
       headers: {},
       params: {},
@@ -59,8 +61,7 @@ class PTCTimekeepCall {
   }) {
     return ApiManager.instance.makeApiCall(
       callName: 'PTCTimekeep',
-      apiUrl:
-          'https://app.phattien.com/api/Timekeep/GetCalendarApp?userName=${userName}',
+      apiUrl: _apiService + '/Timekeep/GetCalendarApp?userName=${userName}',
       callType: ApiCallType.GET,
       headers: {},
       params: {},
@@ -76,8 +77,8 @@ class PTCDetailDateCall {
   }) {
     return ApiManager.instance.makeApiCall(
       callName: 'PTCDetailDate',
-      apiUrl:
-          'https://app.phattien.com/api/Timekeep/GetDateDetail?userName=${userName}&selectDate=${selectDate}',
+      apiUrl: _apiService +
+          '/Timekeep/GetDateDetail?userName=${userName}&selectDate=${selectDate}',
       callType: ApiCallType.GET,
       headers: {},
       params: {},
@@ -93,8 +94,8 @@ class PTCGetLeaveYear {
   }) {
     return ApiManager.instance.makeApiCall(
       callName: 'PTCGetLeaveYear',
-      apiUrl:
-          'https://app.phattien.com/api/Timekeep/GetLeaveYear?userName=${userName}&fromDate=${fromDate}',
+      apiUrl: _apiService +
+          '/Timekeep/GetLeaveYear?userName=${userName}&fromDate=${fromDate}',
       callType: ApiCallType.GET,
       headers: {},
       params: {},
@@ -129,7 +130,7 @@ class PTCCreateTicketTSCall {
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'PTCCreateTicketTS',
-      apiUrl: 'https://app.phattien.com/api/Timekeep/CreateTicketTS',
+      apiUrl: _apiService + '/Timekeep/CreateTicketTS',
       callType: ApiCallType.POST,
       headers: {},
       params: {},
@@ -164,7 +165,7 @@ class PTCCreateTicketCTCall {
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'PTCCreateTicketCT',
-      apiUrl: 'https://app.phattien.com/api/Timekeep/CreateTicketCT',
+      apiUrl: _apiService + '/Timekeep/CreateTicketCT',
       callType: ApiCallType.POST,
       headers: {},
       params: {},
@@ -193,7 +194,7 @@ class PTCCreateTicketTCCall {
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'PTCCreateTicketTC',
-      apiUrl: 'https://app.phattien.com/api/Timekeep/CreateTicketTC',
+      apiUrl: _apiService + '/Timekeep/CreateTicketTC',
       callType: ApiCallType.POST,
       headers: {},
       params: {},
@@ -253,7 +254,7 @@ class PTCCreateTicketNPTT {
 }""";
     return ApiManager.instance.makeApiCall(
       callName: 'PTCCreateTicketNPTT',
-      apiUrl: 'https://app.phattien.com/api/Timekeep/CreateTicketNPTT',
+      apiUrl: _apiService + '/Timekeep/CreateTicketNPTT',
       callType: ApiCallType.POST,
       headers: {},
       params: {},
@@ -299,7 +300,7 @@ class PTCCreateTicketNPCD {
 }""";
     return ApiManager.instance.makeApiCall(
       callName: 'PTCCreateTicketNPCD',
-      apiUrl: 'https://app.phattien.com/api/Timekeep/CreateTicketNPCD',
+      apiUrl: _apiService + '/Timekeep/CreateTicketNPCD',
       callType: ApiCallType.POST,
       headers: {},
       params: {},
@@ -345,7 +346,7 @@ class PTCCreateTicketNPBHXH {
 }""";
     return ApiManager.instance.makeApiCall(
       callName: 'PTCCreateTicketNPBHXH',
-      apiUrl: 'https://app.phattien.com/api/Timekeep/CreateTicketNPBHXH',
+      apiUrl: _apiService + '/Timekeep/CreateTicketNPBHXH',
       callType: ApiCallType.POST,
       headers: {},
       params: {},
@@ -356,14 +357,13 @@ class PTCCreateTicketNPBHXH {
   }
 }
 
-
 class PTCDeleteTicketUpdate {
   static Future<ApiCallResponse> call(
       {String? ticketID = '', String? updateDate = '', String? userName = ''}) {
     return ApiManager.instance.makeApiCall(
         callName: 'PTCDeleteTicketUpdate',
-        apiUrl:
-            'https://app.phattien.com/api/Timekeep/DeleteTicketUpdate?ticketID=${ticketID}&updateDate=${updateDate}&userName=${userName}',
+        apiUrl: _apiService +
+            '/Timekeep/DeleteTicketUpdate?ticketID=${ticketID}&updateDate=${updateDate}&userName=${userName}',
         callType: ApiCallType.GET,
         headers: {},
         params: {},
@@ -376,8 +376,36 @@ class PTCDeleteTicketFurlough {
       {String? ticketID = '', String? updateDate = '', String? userName = ''}) {
     return ApiManager.instance.makeApiCall(
         callName: 'PTCDeleteTicketFurlough',
-        apiUrl:
-            'https://app.phattien.com/api/Timekeep/DeleteTicketFurlough?ticketID=${ticketID}&updateDate=${updateDate}&userName=${userName}',
+        apiUrl: _apiService +
+            '/Timekeep/DeleteTicketFurlough?ticketID=${ticketID}&updateDate=${updateDate}&userName=${userName}',
+        callType: ApiCallType.GET,
+        headers: {},
+        params: {},
+        returnBody: true);
+  }
+}
+
+class PTCGetListUpdateTicket {
+  static Future<ApiCallResponse> call(
+      {String? userName = '', String? type = '', String? fromDate = '',String? toDate = '', String? sort = ''}) {
+    return ApiManager.instance.makeApiCall(
+        callName: 'PTCGetListUpdateTicket',
+        apiUrl: _apiService +
+            '/Timekeep/GetListUpdateTicketSend?userName=${userName}&type=${type}&fromDate=${fromDate}&toDate=${toDate}&sort=${sort}',
+        callType: ApiCallType.GET,
+        headers: {},
+        params: {},
+        returnBody: true);
+  }
+}
+
+class PTCGetListFurloughTicket {
+  static Future<ApiCallResponse> call(
+      {String? userName = '',  String? fromDate = '',String? toDate = '', String? sort = ''}) {
+    return ApiManager.instance.makeApiCall(
+        callName: 'PTCGetListFurloughTicket',
+        apiUrl: _apiService +
+            '/Timekeep/GetListFurloughTicketSend?userName=${userName}&fromDate=${fromDate}&toDate=${toDate}&sort=${sort}',
         callType: ApiCallType.GET,
         headers: {},
         params: {},

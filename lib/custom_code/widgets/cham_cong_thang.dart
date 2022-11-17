@@ -100,7 +100,7 @@ class _ChamCongThangState extends State<ChamCongThang> {
         _datetime.month == DateTime.now().month &&
         _datetime.year == DateTime.now().year)
       //return '0xFFE65100';
-      return '0xFFFFFFFF';
+      return '0xFF13dbfa';
     else if (shiftName == "")
       return '0xFF808080';
     else
@@ -294,7 +294,7 @@ class _ChamCongThangState extends State<ChamCongThang> {
                                       border: Border.all(
                                           color: Color(int.parse(
                                               returnBorderToday(datetime,
-                                                  returnShiftName(datetime))))),
+                                                  returnShiftName(datetime)))),width: 0),
                                       borderRadius: BorderRadius.circular(8)),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
@@ -310,8 +310,7 @@ class _ChamCongThangState extends State<ChamCongThang> {
                                                 returnShiftName(datetime) == ""
                                                     ? Colors.grey
                                                     : returnToday(datetime)
-                                                        ? Color.fromARGB(
-                                                            255, 252, 3, 231)
+                                                        ?  Color(0xFF13dbfa)
                                                         : Colors.white,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -324,8 +323,7 @@ class _ChamCongThangState extends State<ChamCongThang> {
                                         style: TextStyle(
                                             fontSize: 9,
                                             color: returnToday(datetime)
-                                                ? Color.fromARGB(
-                                                    255, 252, 3, 231)
+                                                ? Color(0xFF13dbfa)
                                                 : Colors.white),
                                       ),
                                     ],
