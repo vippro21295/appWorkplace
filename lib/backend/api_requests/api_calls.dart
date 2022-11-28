@@ -8,8 +8,8 @@ import 'api_manager.dart';
 export 'api_manager.dart' show ApiCallResponse;
 
 //const _kPrivateApiFunctionName = 'ffPrivateApiCall';
-const _apiService = 'https://app.phattien.com/api';
-//const _apiService = 'https://0f10-222-253-45-21.ap.ngrok.io/api';
+//const _apiService = 'https://app.phattien.com/api';
+const _apiService = 'https://de79-222-253-45-21.ap.ngrok.io/api';
 
 class PTCLoginCall {
   static Future<ApiCallResponse> call({
@@ -406,6 +406,34 @@ class PTCGetListFurloughTicket {
         callName: 'PTCGetListFurloughTicket',
         apiUrl: _apiService +
             '/Timekeep/GetListFurloughTicketSend?userName=${userName}&fromDate=${fromDate}&toDate=${toDate}&sort=${sort}',
+        callType: ApiCallType.GET,
+        headers: {},
+        params: {},
+        returnBody: true);
+  }
+}
+
+class PTCGetReportFurloughYear {
+  static Future<ApiCallResponse> call(
+      {String? userName = '',  String? year = '',String? departmentId = ''}) {
+    return ApiManager.instance.makeApiCall(
+        callName: 'PTCGetFurloughReportYear',
+        apiUrl: _apiService +
+            '/Timekeep/GetFurloughReportYear?userName=${userName}&year=${year}&departmentId=${departmentId}}',
+        callType: ApiCallType.GET,
+        headers: {},
+        params: {},
+        returnBody: true);
+  }
+}
+
+class PTCGetInfoCustomer {
+  static Future<ApiCallResponse> call(
+      {String? userName = ''}) {
+    return ApiManager.instance.makeApiCall(
+        callName: 'PTCGetInfoCustomer',
+        apiUrl: _apiService +
+            '/User/GetInfoEmplyee?userName=${userName}',
         callType: ApiCallType.GET,
         headers: {},
         params: {},

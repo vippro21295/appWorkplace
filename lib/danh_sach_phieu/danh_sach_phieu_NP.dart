@@ -82,19 +82,26 @@ class _DanhSachPhieuFurloughWidgetState
         numberNAP = 0;
       });
 
-      listFurlough =
-          getJsonField(responseApiService!.jsonBody, r'''$.listObj''').toList();
+      if (getJsonField(responseApiService!.jsonBody, r'''$.isSuccess''')) {
+        listFurlough =
+            getJsonField(responseApiService!.jsonBody, r'''$.listObj''')
+                .toList();
 
-      listFurloughTemp = listFurlough;
+        listFurloughTemp = listFurlough;
 
-      listFurlough.forEach((element) => {
-            if (element["Status"] == "AC2" || element["Status"] == "AC1" || element["Status"] == "ACC")
+        listFurlough.forEach(
+          (element) => {
+            if (element["Status"] == "AC2" ||
+                element["Status"] == "AC1" ||
+                element["Status"] == "ACC")
               numberACC = numberACC + 1
             else if (element["Status"] == "APP")
               numberAPP = numberAPP + 1
             else if (element["Status"] == "NAP")
               numberNAP = numberNAP + 1
-          });
+          },
+        );
+      } 
     }
   }
 
@@ -207,8 +214,9 @@ class _DanhSachPhieuFurloughWidgetState
               color: FlutterFlowTheme.of(context).backgroundComponents,
               size: 24,
             ),
-            onPressed: ()  {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> ChamCongWidget()));
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ChamCongWidget()));
             },
           ),
           title: Text(
@@ -438,7 +446,9 @@ class _DanhSachPhieuFurloughWidgetState
                                   isACC = true;
                                   isNAP = false;
                                   listFurloughTemp = listFurlough
-                                      .where((ele) => (ele["Status"] == "AC2" || ele["Status"] == "AC1" || ele["Status"] == "ACC"))
+                                      .where((ele) => (ele["Status"] == "AC2" ||
+                                          ele["Status"] == "AC1" ||
+                                          ele["Status"] == "ACC"))
                                       .toList();
                                 });
                               },

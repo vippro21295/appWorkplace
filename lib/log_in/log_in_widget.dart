@@ -76,6 +76,10 @@ class _LogInWidgetState extends State<LogInWidget> {
               (responseLogin?.jsonBody ?? ''),
               r'''$.imageUser''',
             ));
+        setState(() => FFAppState().departmentId = getJsonField(
+              (responseLogin?.jsonBody ?? ''),
+              r'''$.deparmentId''',
+            ));
 
         context.pushNamed('ChamCong');
       } else {

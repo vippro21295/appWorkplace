@@ -17,6 +17,7 @@ class FFAppState {
     _userName = prefs.getString('ff_userName') ?? _userName;
     _imageUser = prefs.getString('ff_imageUser') ?? _imageUser;
     _passWord = prefs.getString('ff_passWord') ?? _passWord;
+    _departmentId = prefs.getString('ff_departmentId') ?? _departmentId;
   }
 
   late SharedPreferences prefs;
@@ -40,6 +41,13 @@ class FFAppState {
   set imageUser(String _value) {
     _imageUser = _value;
     prefs.setString('ff_imageUser', _value);
+  }
+
+  String _departmentId = '';
+  String get departmentId => _departmentId;
+  set departmentId(String _value) {
+    _departmentId = _value;
+    prefs.setString('ff_departmentId', _value);
   }
 }
 
