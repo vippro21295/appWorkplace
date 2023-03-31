@@ -69,7 +69,7 @@ class _ChamCongChiTietCongtacWidgetState
             size: 24,
           ),
           onPressed: () async {
-            context.pushNamed('ChamCong');
+            context.pushNamed('NavigationBar');
           },
         ),
         title: Text(

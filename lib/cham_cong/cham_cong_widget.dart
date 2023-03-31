@@ -1,19 +1,13 @@
 import 'package:app_workplace/danh_sach_phieu/danh_sach_phieu_CT_TC_TS.dart';
-import 'package:app_workplace/danh_sach_phieu_cong_tac/danh_sach_phieu_cong_tac_widget.dart';
-import 'package:shimmer/shimmer.dart';
-
 import '../backend/api_requests/api_calls.dart';
 import '../custom_code/actions/shimmer.dart';
 import '../danh_sach_phieu/danh_sach_phieu_NP.dart';
-import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
-import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../custom_code/actions/index.dart' as actions;
+import 'package:badges/badges.dart' as badges;
+import '../thong_bao/thong_bao_cham_cong_widget.dart';
 
 class ChamCongWidget extends StatefulWidget {
   const ChamCongWidget({Key? key}) : super(key: key);
@@ -37,56 +31,95 @@ class _ChamCongWidgetState extends State<ChamCongWidget> {
           return ShimmerLoading();
         }
         final chamCongPTCTitleResponse = snapshot.data!;
+
         return Scaffold(
           key: scaffoldKey,
           backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
           appBar: AppBar(
             backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
             automaticallyImplyLeading: false,
-            leading: FlutterFlowIconButton(
-              borderColor: Colors.transparent,
-              borderRadius: 30,
-              borderWidth: 1,
-              buttonSize: 50,
-              icon: Icon(
-                Icons.arrow_back_ios_outlined,
-                color: FlutterFlowTheme.of(context).backgroundComponents,
-                size: 24,
-              ),
-              onPressed: () async {
-                context.pop();
-              },
-            ),
+            // leading: FlutterFlowIconButton(
+            //   borderColor: Colors.transparent,
+            //   borderRadius: 30,
+            //   borderWidth: 1,
+            //   buttonSize: 50,
+            //   icon: Icon(
+            //     Icons.arrow_back_ios_outlined,
+            //     color: FlutterFlowTheme.of(context).backgroundComponents,
+            //     size: 24,
+            //   ),
+            //   onPressed: () async {
+            //     context.pop();
+            //   },
+            // ),
+
             title: Text(
               'Chấm công',
               style: FlutterFlowTheme.of(context).subtitle2.override(
-                    fontFamily: 'Inter',
+                    fontFamily: 'Raleway',
+                    fontWeight: FontWeight.w700,
                     color: FlutterFlowTheme.of(context).backgroundComponents,
                   ),
             ),
             actions: [
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 5),
-                child: Container(
-                  width: 70,
-                  height: 70,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      context.pushNamed('ProfilePage');
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () => {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ThongBaoChamCongWidget()))                              
                     },
-                    child: Image.network(
-                      FFAppState().imageUser,
-                      fit: BoxFit.contain,
+                    child: badges.Badge(
+                      //position: badges.BadgePosition.topEnd(top:-10, end:-14),
+                      badgeContent: Text(
+                        getJsonField(
+                          chamCongPTCTitleResponse.jsonBody,
+                          r'''$.listObj.CountAlert''',
+                        ).toString(),
+                        style: TextStyle(fontSize: 10),
+                      ),
+                      child: Icon(
+                        Icons.notifications_none,
+                        color: Colors.blue,
+                        size: 25,
+                      ),
+                      badgeStyle: badges.BadgeStyle(
+                        shape: badges.BadgeShape.square,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        borderSide: BorderSide(color: Colors.white, width: 1),
+                        borderRadius: BorderRadius.circular(8),
+                        elevation: 0,
+                      ),
                     ),
                   ),
-                ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    child: Container(
+                      width: 70,
+                      height: 70,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          context.pushNamed('ProfilePage');
+                        },
+                        child: Image.network(
+                          FFAppState().imageUser,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
-            centerTitle: false,
+            centerTitle: true,
             elevation: 1,
           ),
           body: SafeArea(
@@ -530,7 +563,6 @@ class _ChamCongWidgetState extends State<ChamCongWidget> {
                                                           1, 1),
                                                   child: Icon(
                                                     Icons.error_outline,
-
                                                     color: FlutterFlowTheme.of(
                                                             context)
                                                         .stateRED1,
@@ -662,7 +694,8 @@ class _ChamCongWidgetState extends State<ChamCongWidget> {
                                                       AlignmentDirectional(
                                                           1, 1),
                                                   child: Icon(
-                                                    Icons.edit_calendar_outlined,
+                                                    Icons
+                                                        .edit_calendar_outlined,
                                                     color: FlutterFlowTheme.of(
                                                             context)
                                                         .stateOrange1,
@@ -1044,8 +1077,12 @@ class _ChamCongWidgetState extends State<ChamCongWidget> {
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                       child: InkWell(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> DanhSachPhieuFurloughWidget()));
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      DanhSachPhieuFurloughWidget()));
                         },
                         child: Material(
                           color: Colors.transparent,
@@ -1066,8 +1103,8 @@ class _ChamCongWidgetState extends State<ChamCongWidget> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Padding(
-                                  padding:
-                                      EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      5, 0, 0, 0),
                                   child: Container(
                                     width: 50,
                                     height: 50,

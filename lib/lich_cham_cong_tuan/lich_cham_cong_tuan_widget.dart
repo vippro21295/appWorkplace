@@ -34,7 +34,7 @@ class _LichChamCongTuanWidgetState extends State<LichChamCongTuanWidget> {
             size: 24,
           ),
           onPressed: () async {
-            context.pushNamed('ChamCong');
+            context.pushNamed('NavigationBar');
           },
         ),
         title: Text(

@@ -78,9 +78,6 @@ class _BaoCaoPhepWidgetState extends State<BaoCaoPhepWidget> {
           furReport.maxAdvanceLeave =
               double.parse(leaveYear["MaxAdvanceLeave"].toString());
         });
-      }else{
-          actions.toastMessage(context, "Error", "Thất bại",
-              getJsonField((responseApiReport?.jsonBody ?? ''), r'''$.message'''));
       }
     }
   }

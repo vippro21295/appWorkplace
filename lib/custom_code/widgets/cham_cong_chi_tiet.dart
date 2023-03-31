@@ -3524,21 +3524,21 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                                     child: TextField(
                                       readOnly: true,
                                       controller: fromDateNP,
-                                      onTap: () async {
-                                        DateTime? pickeddate =
-                                            await showDatePicker(
-                                                context: context,
-                                                initialDate: DateTime.now(),
-                                                firstDate: DateTime(2000),
-                                                lastDate: DateTime(2101));
-                                        if (pickeddate != null) {
-                                          setState(() {
-                                            fromDateNP.text =
-                                                DateFormat('dd/MM/yyyy')
-                                                    .format(pickeddate);
-                                          });
-                                        }
-                                      },
+                                      // onTap: () async {
+                                      //   DateTime? pickeddate =
+                                      //       await showDatePicker(
+                                      //           context: context,
+                                      //           initialDate: DateTime.now(),
+                                      //           firstDate: DateTime(2000),
+                                      //           lastDate: DateTime(2101));
+                                      //   if (pickeddate != null) {
+                                      //     setState(() {
+                                      //       fromDateNP.text =
+                                      //           DateFormat('dd/MM/yyyy')
+                                      //               .format(pickeddate);
+                                      //     });
+                                      //   }
+                                      // },
                                       decoration: InputDecoration(
                                         labelText: 'Nghỉ từ ngày',
                                         hintStyle: FlutterFlowTheme.of(context)
@@ -3606,19 +3606,19 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                                         5, 0, 0, 0),
                                     child: TextFormField(
                                       controller: toDateNP,
-                                      // onTap: () async {
-                                      //   DateTime? pickeddate =
-                                      //       await showDatePicker(
-                                      //           context: context,
-                                      //           initialDate: DateTime.now(),
-                                      //           firstDate: DateTime(2000),
-                                      //           lastDate: DateTime(2101));
-                                      //   if (pickeddate != null) {
-                                      //     setState(() {
-                                      //       addDateNP(pickeddate);
-                                      //     });
-                                      //   }
-                                      // },
+                                      onTap: () async {
+                                        DateTime? pickeddate =
+                                            await showDatePicker(
+                                                context: context,
+                                                initialDate: DateTime.now(),
+                                                firstDate: DateTime(2000),
+                                                lastDate: DateTime(2101));
+                                        if (pickeddate != null) {
+                                          setState(() {
+                                            addDateNP(pickeddate);
+                                          });
+                                        }
+                                      },
                                       obscureText: false,
                                       decoration: InputDecoration(
                                         labelText: 'Nghỉ đến ngày',
@@ -3962,22 +3962,7 @@ class _ChamCongChiTietState extends State<ChamCongChiTiet> {
                                         0, 0, 5, 0),
                                     child: TextField(
                                       readOnly: true,
-                                      controller: fromDateNP,
-                                      // onTap: () async {
-                                      //   DateTime? pickeddate =
-                                      //       await showDatePicker(
-                                      //           context: context,
-                                      //           initialDate: DateTime.now(),
-                                      //           firstDate: DateTime(2000),
-                                      //           lastDate: DateTime(2101));
-                                      //   if (pickeddate != null) {
-                                      //     setState(() {
-                                      //       fromDateNP.text =
-                                      //           DateFormat('dd/MM/yyyy')
-                                      //               .format(pickeddate);
-                                      //     });
-                                      //   }
-                                      // },
+                                      controller: fromDateNP,                                
                                       decoration: InputDecoration(
                                         labelText: 'Nghỉ từ ngày',
                                         hintStyle: FlutterFlowTheme.of(context)

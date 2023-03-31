@@ -21,11 +21,10 @@ export 'cham_cong_chi_tiet_phep_phnam/cham_cong_chi_tiet_phep_phnam_widget.dart'
     show ChamCongChiTietPhepPhnamWidget;
 export 'bao_cao_phep/bao_cao_phep_widget.dart' show BaoCaoPhepWidget;
 export 'tin_tuc/tin_tuc_widget.dart' show TinTucWidget;
-export 'tim_kiem_tin_tuc/tim_kiem_tin_tuc_widget.dart' show TimKiemTinTucWidget;
 export 'danh_muc_tin_tuc/danh_muc_tin_tuc_widget.dart' show DanhMucTinTucWidget;
-export 'lich_cham_cong_thang_copy/lich_cham_cong_thang_copy_widget.dart'
+export 'lich_cham_cong_thang_copy/lich_cham_cong_thang_widget.dart'
     show LichChamCongThangCopyWidget;
-export 'chi_tiet_tin_tuc/chi_tiet_tin_tuc_widget.dart' show ChiTietTinTucWidget;
+export 'tin_tuc/chi_tiet_tin_tuc_widget.dart' show ChiTietTinTucWidget;
 export 'cham_cong_chi_tiet_tre_som_copy/cham_cong_chi_tiet_tre_som_copy_widget.dart'
     show ChamCongChiTietTreSomCopyWidget;
 export 'profile_page/profile_page.dart' show ProfilePageWidget;

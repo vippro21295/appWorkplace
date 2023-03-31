@@ -1,16 +1,11 @@
 import 'dart:async';
-
+import 'package:app_workplace/profile_page/edit_profile1.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
-import '../../profile_page/profile_page.dart';
-import '../flutter_flow_theme.dart';
-
+import '../../bottom_navigation/bottom_navigation_bar.dart';
 import '../../index.dart';
-import '../../main.dart';
 import 'serialization_util.dart';
-
 export 'package:go_router/go_router.dart';
 export 'serialization_util.dart';
 
@@ -60,6 +55,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               name: 'LogIn',
               path: 'logIn',
               builder: (context, params) => LogInWidget(),
+            ),
+            FFRoute(
+              name: 'NavigationBar',
+              path: 'NavigationBar',
+              builder: (context, params) => NavigationBarWidget(),
             ),
             FFRoute(
               name: 'ForgotPassword',
@@ -130,11 +130,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               path: 'tinTuc',
               builder: (context, params) => TinTucWidget(),
             ),
-            FFRoute(
-              name: 'TimKiemTinTuc',
-              path: 'timKiemTinTuc',
-              builder: (context, params) => TimKiemTinTucWidget(),
-            ),
+          
             FFRoute(
               name: 'DanhMucTinTuc',
               path: 'danhMucTinTuc',
@@ -155,6 +151,10 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               path: 'ProfilePage',
               builder: (context, params) => ProfilePageWidget(),
             ),
+            FFRoute(
+                name: 'EditProfile1',
+                path: 'EditProfile1',
+                builder: (context, params) => EditProfile1Widget()),
             FFRoute(
               name: 'ChamCongChiTiet-TreSomCopy',
               path: 'chamCongChiTietTreSomCopy',

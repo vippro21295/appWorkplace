@@ -51,7 +51,7 @@ class _LogInWidgetState extends State<LogInWidget> {
         (responseLogin?.jsonBody ?? ''),
         r'''$.isSuccess''',
       )) {
-        context.pushNamed('ChamCong');
+        context.pushNamed('NavigationBar');
       } else {
         actions.toastMessageCustom(context, "Success", "Thất bại",
             "Tài khoản hoặc mật khẩu không chính xác");
@@ -81,7 +81,7 @@ class _LogInWidgetState extends State<LogInWidget> {
               r'''$.deparmentId''',
             ));
 
-        context.pushNamed('ChamCong');
+        context.pushNamed('NavigationBar');
       } else {
         actions.toastMessage(context, "Error", "Thất bại",
             "Tài khoản hoặc mật khẩu không chính xác");

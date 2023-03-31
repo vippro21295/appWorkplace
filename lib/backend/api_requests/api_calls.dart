@@ -1,5 +1,4 @@
 //import 'dart:ui';
-
 import '../../custom_code/model/furlough_ticket.dart';
 import '../../flutter_flow/flutter_flow_util.dart';
 
@@ -9,7 +8,7 @@ export 'api_manager.dart' show ApiCallResponse;
 
 //const _kPrivateApiFunctionName = 'ffPrivateApiCall';
 //const _apiService = 'https://app.phattien.com/api';
-const _apiService = 'https://de79-222-253-45-21.ap.ngrok.io/api';
+const _apiService = 'https://04f1-222-253-45-21.ap.ngrok.io/api';
 
 class PTCLoginCall {
   static Future<ApiCallResponse> call({
@@ -387,7 +386,11 @@ class PTCDeleteTicketFurlough {
 
 class PTCGetListUpdateTicket {
   static Future<ApiCallResponse> call(
-      {String? userName = '', String? type = '', String? fromDate = '',String? toDate = '', String? sort = ''}) {
+      {String? userName = '',
+      String? type = '',
+      String? fromDate = '',
+      String? toDate = '',
+      String? sort = ''}) {
     return ApiManager.instance.makeApiCall(
         callName: 'PTCGetListUpdateTicket',
         apiUrl: _apiService +
@@ -401,7 +404,10 @@ class PTCGetListUpdateTicket {
 
 class PTCGetListFurloughTicket {
   static Future<ApiCallResponse> call(
-      {String? userName = '',  String? fromDate = '',String? toDate = '', String? sort = ''}) {
+      {String? userName = '',
+      String? fromDate = '',
+      String? toDate = '',
+      String? sort = ''}) {
     return ApiManager.instance.makeApiCall(
         callName: 'PTCGetListFurloughTicket',
         apiUrl: _apiService +
@@ -415,7 +421,7 @@ class PTCGetListFurloughTicket {
 
 class PTCGetReportFurloughYear {
   static Future<ApiCallResponse> call(
-      {String? userName = '',  String? year = '',String? departmentId = ''}) {
+      {String? userName = '', String? year = '', String? departmentId = ''}) {
     return ApiManager.instance.makeApiCall(
         callName: 'PTCGetFurloughReportYear',
         apiUrl: _apiService +
@@ -428,12 +434,91 @@ class PTCGetReportFurloughYear {
 }
 
 class PTCGetInfoCustomer {
-  static Future<ApiCallResponse> call(
-      {String? userName = ''}) {
+  static Future<ApiCallResponse> call({String? userName = ''}) {
     return ApiManager.instance.makeApiCall(
         callName: 'PTCGetInfoCustomer',
+        apiUrl: _apiService + '/User/GetInfoEmplyee?userName=${userName}',
+        callType: ApiCallType.GET,
+        headers: {},
+        params: {},
+        returnBody: true);
+  }
+}
+
+class PTCGetAlertTimekeep {
+  static Future<ApiCallResponse> call({String? userName = ''}) {
+    return ApiManager.instance.makeApiCall(
+        callName: 'PTCGetAlertTimekeep',
+        apiUrl: _apiService + '/Timekeep/GetAlertTimekeep?userName=${userName}',
+        callType: ApiCallType.GET,
+        headers: {},
+        params: {},
+        returnBody: true);
+  }
+}
+
+/// Newss ---------------------------------------------
+///
+///
+class PTCGetNews {
+  static Future<ApiCallResponse> call({String? searchNews = ''}) {
+    return ApiManager.instance.makeApiCall(
+        callName: 'PTCGetNews',
+        apiUrl: _apiService + '/News/GetNews?searchNews=${searchNews}',
+        callType: ApiCallType.GET,
+        headers: {},
+        params: {},
+        returnBody: true);
+  }
+}
+
+class PTCGetNewsDetail {
+  static Future<ApiCallResponse> call(
+      {String? userName = '', String? Id = ''}) {
+    return ApiManager.instance.makeApiCall(
+        callName: 'PTCGetNewsDetail',
+        apiUrl:
+            _apiService + '/News/GetNewsDetail?userName=${userName}&id=${Id}',
+        callType: ApiCallType.GET,
+        headers: {},
+        params: {},
+        returnBody: true);
+  }
+}
+
+class PTCUpdateLikeNews {
+  static Future<ApiCallResponse> call(
+      {String? userName = '', String? Id = '', String? Like = ''}) {
+    return ApiManager.instance.makeApiCall(
+        callName: 'UpdateLike_UnLike',
         apiUrl: _apiService +
-            '/User/GetInfoEmplyee?userName=${userName}',
+            '/News/UpdateLike_UnLike?userName=${userName}&id=${Id}&like=${Like}',
+        callType: ApiCallType.GET,
+        headers: {},
+        params: {},
+        returnBody: true);
+  }
+}
+
+class PTCInsertCommentNews {
+  static Future<ApiCallResponse> call(
+      {String? userName = '', String? Id = '', String? comment}) {
+    return ApiManager.instance.makeApiCall(
+        callName: 'PTCInsertCommentNews',
+        apiUrl: _apiService +
+            '/News/InsertComment?userName=${userName}&id=${Id}&comment=${comment}',
+        callType: ApiCallType.GET,
+        headers: {},
+        params: {},
+        returnBody: true);
+  }
+}
+
+class PTCDeleteCmtNews {
+  static Future<ApiCallResponse> call({String? id = '', String? IdCmt = ''}) {
+    return ApiManager.instance.makeApiCall(
+        callName: 'PTCDeleteCmtNews',
+        apiUrl: _apiService + '/News/DeleteComment?id=${id}&idCmt=${IdCmt}',
         callType: ApiCallType.GET,
         headers: {},
         params: {},

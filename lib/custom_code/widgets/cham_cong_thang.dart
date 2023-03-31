@@ -44,12 +44,12 @@ class _ChamCongThangState extends State<ChamCongThang> {
     super.initState();
   }
 
-  void _handleData(date) {
-    setState(() {
-      selectedDay = date;
-    });
-    print(selectedDay);
-  }
+  // void _handleData(date) {
+  //   setState(() {
+  //     selectedDay = date;
+  //   });
+  //   print(selectedDay);
+  // }
 
   void getTimekeep() async {
     if (timeKeep.isEmpty) {
@@ -249,8 +249,8 @@ class _ChamCongThangState extends State<ChamCongThang> {
                             locale: 'vi_VN',
                             rowHeight: 80,
                             focusedDay: focusedDay,
-                            firstDay: DateTime(2020),
-                            lastDay: DateTime(2023),
+                            firstDay: DateTime(2022),
+                            lastDay: DateTime(2025),
                             calendarFormat: format,
                             startingDayOfWeek: StartingDayOfWeek.monday,
                             daysOfWeekVisible: true,

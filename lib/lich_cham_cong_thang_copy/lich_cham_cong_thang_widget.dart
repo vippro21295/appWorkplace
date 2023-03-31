@@ -1,4 +1,3 @@
-import 'package:shimmer/shimmer.dart';
 
 import '../backend/api_requests/api_calls.dart';
 import '../custom_code/actions/shimmer.dart';
@@ -7,7 +6,7 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../custom_code/widgets/index.dart' as custom_widgets;
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 
 class LichChamCongThangCopyWidget extends StatefulWidget {
   const LichChamCongThangCopyWidget({Key? key}) : super(key: key);
@@ -49,7 +48,7 @@ class _LichChamCongThangCopyWidgetState
                 size: 24,
               ),
               onPressed: () async {
-                context.pushNamed('ChamCong');
+                context.pushNamed('NavigationBar');
               },
             ),
             title: Text(
